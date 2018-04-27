@@ -1,0 +1,115 @@
+{
+	"groups": [
+		{
+			"keys": "bg_jpg,egret_icon_png,description_json,big_compass_png,blue_progress_png,gray_progress_png,little_compass_png,finger_png,light_png,0_png,1_png,2_png,3_png,4_png,5_png,6_png,7_png,8_png,9_png,big_compass_shadow_png,little_compass_shadow_png",
+			"name": "preload"
+		}
+	],
+	"resources": [
+		{
+			"url": "assets/bg.jpg",
+			"type": "image",
+			"name": "bg_jpg"
+		},
+		{
+			"url": "assets/egret_icon.png",
+			"type": "image",
+			"name": "egret_icon_png"
+		},
+		{
+			"url": "config/description.json",
+			"type": "json",
+			"name": "description_json"
+		},
+		{
+			"url": "assets/big_compass.png",
+			"type": "image",
+			"name": "big_compass_png"
+		},
+		{
+			"url": "assets/blue_progress.png",
+			"type": "image",
+			"name": "blue_progress_png"
+		},
+		{
+			"url": "assets/gray_progress.png",
+			"type": "image",
+			"name": "gray_progress_png"
+		},
+		{
+			"url": "assets/little_compass.png",
+			"type": "image",
+			"name": "little_compass_png"
+		},
+		{
+			"url": "assets/finger.png",
+			"type": "image",
+			"name": "finger_png"
+		},
+		{
+			"url": "assets/light.png",
+			"type": "image",
+			"name": "light_png"
+		},
+		{
+			"name": "0_png",
+			"type": "image",
+			"url": "assets/number/0.png"
+		},
+		{
+			"name": "1_png",
+			"type": "image",
+			"url": "assets/number/1.png"
+		},
+		{
+			"name": "2_png",
+			"type": "image",
+			"url": "assets/number/2.png"
+		},
+		{
+			"name": "3_png",
+			"type": "image",
+			"url": "assets/number/3.png"
+		},
+		{
+			"name": "4_png",
+			"type": "image",
+			"url": "assets/number/4.png"
+		},
+		{
+			"name": "5_png",
+			"type": "image",
+			"url": "assets/number/5.png"
+		},
+		{
+			"name": "6_png",
+			"type": "image",
+			"url": "assets/number/6.png"
+		},
+		{
+			"name": "7_png",
+			"type": "image",
+			"url": "assets/number/7.png"
+		},
+		{
+			"name": "8_png",
+			"type": "image",
+			"url": "assets/number/8.png"
+		},
+		{
+			"name": "9_png",
+			"type": "image",
+			"url": "assets/number/9.png"
+		},
+		{
+			"name": "big_compass_shadow_png",
+			"type": "image",
+			"url": "assets/big_compass_shadow.png"
+		},
+		{
+			"name": "little_compass_shadow_png",
+			"type": "image",
+			"url": "assets/little_compass_shadow.png"
+		}
+	]
+}
