@@ -157,20 +157,61 @@ var Main = (function (_super) {
         bg.graphics.drawRect(0, 0, Utils.getInstance().StageWidth, Utils.getInstance().StageHeight);
         bg.graphics.endFill();
         this.addChild(bg);
-        var timer = new egret.Timer(25, 0);
-        timer.addEventListener(egret.TimerEvent.TIMER, this.timerFunc, this);
-        timer.start();
+        this.timer = new egret.Timer(25, 0);
+        this.timer.addEventListener(egret.TimerEvent.TIMER, this.timerFunc, this);
         this.setScoreTitle(0);
         this.setProcessBar();
         this.setCompass();
         this.initEvents();
+        this.createStartScene();
+    };
+    Main.prototype.createStartScene = function () {
+        this.startBG = this.createBitmapByName("startbg_png");
+        this.addChild(this.startBG);
+        this.startName = this.createBitmapByName("gamename_png");
+        this.addChild(this.startName);
+        this.startName.x = (Utils.getInstance().StageWidth - this.startName.width) * 0.5;
+        this.startName.y = 330;
+        this.startBtn = this.createBitmapByName("start_png");
+        this.addChild(this.startBtn);
+        this.startBtn.x = (Utils.getInstance().StageWidth - this.startBtn.width) * 0.5;
+        this.startBtn.y = 902;
+        this.rankBtn = this.createBitmapByName("rank_png");
+        this.addChild(this.rankBtn);
+        this.rankBtn.x = (Utils.getInstance().StageWidth - this.rankBtn.width) * 0.5;
+        this.rankBtn.y = Utils.getInstance().StageHeight - this.rankBtn.height - 35;
+        this.startBtn.touchEnabled = true;
+        this.rankBtn.touchEnabled = true;
+        this.startBtn.addEventListener(egret.TouchEvent.TOUCH_TAP, this.startGame, this);
+        this.rankBtn.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onRank, this);
+    };
+    Main.prototype.startGame = function (evt) {
+        this.removeChild(this.startBG);
+        this.removeChild(this.startName);
+        this.removeChild(this.startBtn);
+        this.removeChild(this.rankBtn);
+        this.createGuide();
+    };
+    Main.prototype.onRank = function (evt) {
+        if (!this.rankView) {
+            this.rankView = new RankView();
+        }
+        this.addChild(this.rankView);
     };
     Main.prototype.initEvents = function () {
         this.fnCompass.addEventListener(SelfEvent.HitEvent, this.hitChange, this);
+        this.processBar.addEventListener(GameEvent.OverEvent, this.gameOver, this);
     };
     Main.prototype.hitChange = function (e) {
         this.totalScore++;
+        Utils.getInstance().totalScore = this.totalScore;
         this.fnScoreNum.setNumber(this.totalScore);
+        this.processBar.resetProcess();
+    };
+    Main.prototype.gameOver = function (e) {
+        this.timer.stop();
+        this.overView = new OverView();
+        this.addChild(this.overView);
     };
     Main.prototype.timerFunc = function () {
         // egret.log("计时");
@@ -201,6 +242,27 @@ var Main = (function (_super) {
             this.processBar.x = (Utils.getInstance().StageWidth - this.processBar.width) * 0.5;
             this.processBar.y = 272;
         }
+    };
+    Main.prototype.createGuide = function () {
+        this.guideBG = new egret.Shape();
+        this.guideBG.graphics.beginFill(0x666666);
+        this.guideBG.graphics.drawRect(0, 0, Utils.getInstance().StageWidth, Utils.getInstance().StageHeight);
+        this.guideBG.graphics.endFill();
+        this.guideBG.alpha = 0.7;
+        this.addChild(this.guideBG);
+        this.guideTip = Utils.createBitmapByName("tip_png");
+        this.addChild(this.guideTip);
+        this.guideTip.x = (Utils.getInstance().StageWidth - this.guideTip.width) * 0.5;
+        this.guideTip.y = Utils.getInstance().StageHeight - this.guideTip.height - 71;
+        this.guideBG.touchEnabled = true;
+        this.guideTip.touchEnabled = true;
+        this.guideBG.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onStartGame, this);
+        this.guideTip.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onStartGame, this);
+    };
+    Main.prototype.onStartGame = function (evt) {
+        this.removeChild(this.guideBG);
+        this.removeChild(this.guideTip);
+        this.timer.start();
     };
     /**
      * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。

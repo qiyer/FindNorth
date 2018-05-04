@@ -12,11 +12,14 @@ var FNProcessBar = (function (_super) {
     __extends(FNProcessBar, _super);
     function FNProcessBar() {
         var _this = _super.call(this) || this;
-        _this.currentIndex = 100;
+        _this.currentIndex = 500;
+        _this.timeArr = [300, 260, 240, 200, 180, 160, 140, 100, 80, 50];
+        _this.currentLevel = 0;
         _this.createView();
         return _this;
     }
     FNProcessBar.prototype.createView = function () {
+        this.currentIndex = this.timeArr[this.currentLevel];
         if (!this.grayBitmap) {
             this.grayBitmap = new egret.Bitmap();
             var texture = RES.getRes("gray_progress_png");
@@ -46,10 +49,47 @@ var FNProcessBar = (function (_super) {
             this.lightBitmap.y = 15;
         }
     };
+    FNProcessBar.prototype.resetProcess = function () {
+        if (Utils.getInstance().totalScore < 20) {
+            this.currentLevel = 0;
+        }
+        else if (Utils.getInstance().totalScore < 40) {
+            this.currentLevel = 1;
+        }
+        else if (Utils.getInstance().totalScore < 60) {
+            this.currentLevel = 2;
+        }
+        else if (Utils.getInstance().totalScore < 80) {
+            this.currentLevel = 3;
+        }
+        else if (Utils.getInstance().totalScore < 120) {
+            this.currentLevel = 4;
+        }
+        else if (Utils.getInstance().totalScore < 140) {
+            this.currentLevel = 5;
+        }
+        else if (Utils.getInstance().totalScore < 160) {
+            this.currentLevel = 6;
+        }
+        else if (Utils.getInstance().totalScore < 180) {
+            this.currentLevel = 7;
+        }
+        else if (Utils.getInstance().totalScore < 200) {
+            this.currentLevel = 8;
+        }
+        else if (Utils.getInstance().totalScore < 220) {
+            this.currentLevel = 9;
+        }
+        this.currentIndex = this.timeArr[this.currentLevel];
+    };
     FNProcessBar.prototype.onProgress = function () {
         if (this.currentIndex > 0) {
             this.currentIndex--;
-            this.maskBitmap.width = this.blueBitmap.width * this.currentIndex / 100;
+            this.maskBitmap.width = this.blueBitmap.width * this.currentIndex / 500;
+        }
+        else {
+            var overEvent = egret.Event.create(GameEvent, GameEvent.OverEvent);
+            this.dispatchEvent(overEvent);
         }
     };
     return FNProcessBar;

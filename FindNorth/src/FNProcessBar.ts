@@ -10,10 +10,13 @@ class FNProcessBar extends egret.Sprite {
 	private lightBitmap : egret.Bitmap;
 	private maskBitmap  : egret.Bitmap;
 
-	private currentIndex: number = 100;
+	private currentIndex: number   = 500;
+	private timeArr     : number[] = [300,260,240,200,180,160,140,100,80,50];
+	private currentLevel: number   = 0;
 	
 
     private createView(): void {
+		this.currentIndex = this.timeArr[this.currentLevel];
 		if(!this.grayBitmap){
 			this.grayBitmap = new egret.Bitmap();
         	let texture: egret.Texture = RES.getRes("gray_progress_png");
@@ -47,10 +50,38 @@ class FNProcessBar extends egret.Sprite {
 		}
     }
 
+	public resetProcess():void{
+		if(Utils.getInstance().totalScore < 20){
+			this.currentLevel = 0 ;
+		} else if(Utils.getInstance().totalScore < 40){
+			this.currentLevel = 1 ;
+		} else if(Utils.getInstance().totalScore < 60){
+			this.currentLevel = 2 ;
+		} else if(Utils.getInstance().totalScore < 80){
+			this.currentLevel = 3 ;
+		}else if(Utils.getInstance().totalScore < 120){
+			this.currentLevel = 4 ;
+		}else if(Utils.getInstance().totalScore < 140){
+			this.currentLevel = 5 ;
+		}else if(Utils.getInstance().totalScore < 160){
+			this.currentLevel = 6 ;
+		}else if(Utils.getInstance().totalScore < 180){
+			this.currentLevel = 7 ;
+		}else if(Utils.getInstance().totalScore < 200){
+			this.currentLevel = 8 ;
+		}else if(Utils.getInstance().totalScore < 220){
+			this.currentLevel = 9 ;
+		}
+		this.currentIndex = this.timeArr[this.currentLevel];
+	}
+
     public onProgress(): void {
 		if(this.currentIndex > 0){
 			this.currentIndex--;
-			this.maskBitmap.width = this.blueBitmap.width*this.currentIndex/100;
+			this.maskBitmap.width = this.blueBitmap.width*this.currentIndex/500;
+		}else{
+			var overEvent = egret.Event.create(GameEvent,GameEvent.OverEvent);
+        	this.dispatchEvent(overEvent);	
 		}
 	}
 }

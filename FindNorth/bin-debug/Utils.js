@@ -5,6 +5,7 @@ var Utils = (function () {
     function Utils() {
         this.StageWidth = 750;
         this.StageHeight = 1334;
+        this.totalScore = 0;
     }
     Utils.getInstance = function () {
         if (this.instance == null) {
@@ -15,6 +16,12 @@ var Utils = (function () {
     Utils.prototype.initStage = function (stageWidth, stageHeight) {
         this.StageHeight = stageHeight;
         this.StageWidth = stageWidth;
+    };
+    Utils.createBitmapByName = function (name) {
+        var result = new egret.Bitmap();
+        var texture = RES.getRes(name);
+        result.texture = texture;
+        return result;
     };
     Utils.UIWidth = 750;
     Utils.UIHeight = 1334;

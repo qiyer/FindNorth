@@ -1,7 +1,7 @@
 {
 	"groups": [
 		{
-			"keys": "bg_jpg,egret_icon_png,description_json,big_compass_png,blue_progress_png,gray_progress_png,little_compass_png,finger_png,light_png,0_png,1_png,2_png,3_png,4_png,5_png,6_png,7_png,8_png,9_png,big_compass_shadow_png,little_compass_shadow_png",
+			"keys": "bg_jpg,egret_icon_png,description_json,big_compass_png,blue_progress_png,gray_progress_png,little_compass_png,finger_png,light_png,0_png,1_png,2_png,3_png,4_png,5_png,6_png,7_png,8_png,9_png,big_compass_shadow_png,little_compass_shadow_png,start_png,rank_png,gamename_png,startbg_png,rankbg_png,back_png,tip_png,share_png,retry_png,home_btn_png",
 			"name": "preload"
 		}
 	],
@@ -110,6 +110,56 @@
 			"name": "little_compass_shadow_png",
 			"type": "image",
 			"url": "assets/little_compass_shadow.png"
+		},
+		{
+			"name": "start_png",
+			"type": "image",
+			"url": "assets/start.png"
+		},
+		{
+			"name": "rank_png",
+			"type": "image",
+			"url": "assets/rank.png"
+		},
+		{
+			"name": "gamename_png",
+			"type": "image",
+			"url": "assets/gamename.png"
+		},
+		{
+			"name": "startbg_png",
+			"type": "image",
+			"url": "assets/startbg.png"
+		},
+		{
+			"name": "rankbg_png",
+			"type": "image",
+			"url": "assets/rankbg.png"
+		},
+		{
+			"name": "back_png",
+			"type": "image",
+			"url": "assets/back.png"
+		},
+		{
+			"name": "tip_png",
+			"type": "image",
+			"url": "assets/tip.png"
+		},
+		{
+			"name": "share_png",
+			"type": "image",
+			"url": "assets/share.png"
+		},
+		{
+			"name": "retry_png",
+			"type": "image",
+			"url": "assets/retry.png"
+		},
+		{
+			"name": "home_btn_png",
+			"type": "image",
+			"url": "assets/home_btn.png"
 		}
 	]
 }

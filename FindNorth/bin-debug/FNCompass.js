@@ -17,11 +17,13 @@ var FNCompass = (function (_super) {
         _this.standardLimit = Math.PI * 1.5;
         _this.bigSpeed = 1;
         _this.littleSpeed = 4;
+        _this.curOrientation = 1;
+        _this.bigArr = [[0.0, 1.1], [0.2, 1.1], [0.3, 1.0], [0.4, 0.9], [0.5, 0.8]];
+        _this.litArr = [[0.6, 1.8], [0.7, 1.6], [0.8, 1.5], [0.9, 1.4], [1.0, 1.2]];
         _this.createView();
         return _this;
     }
     FNCompass.prototype.createView = function () {
-        this.randomBound();
         if (!this.bigShadow) {
             this.bigShadow = new egret.Bitmap();
             var texture = RES.getRes("big_compass_shadow_png");
@@ -35,15 +37,6 @@ var FNCompass = (function (_super) {
             this.bigCPBitmap.texture = texture;
         }
         var r = this.bigCPBitmap.width * 0.5;
-        if (!this.bigSector) {
-            this.bigSector = new egret.Shape();
-            this.bigSector.graphics.beginFill(0xFF7F50, 0.7);
-            this.bigSector.graphics.moveTo(r, r); //绘制点移动(r, r)点
-            this.bigSector.graphics.lineTo(r * 2, r); //画线到弧的起始点
-            this.bigSector.graphics.drawArc(r, r, r, this.bigRect[0], this.bigRect[1], false);
-            this.bigSector.graphics.lineTo(r, r); //从终点画线到圆形。到此扇形的封闭区域形成		
-            this.bigSector.graphics.endFill();
-        }
         if (!this.bigSprite) {
             this.bigSprite = new egret.Sprite;
             this.bigSprite.width = r;
@@ -54,7 +47,6 @@ var FNCompass = (function (_super) {
             this.bigSprite.y = r;
             this.addChild(this.bigSprite);
             this.bigSprite.addChild(this.bigCPBitmap);
-            this.bigSprite.addChild(this.bigSector);
         }
         if (!this.littleShadow) {
             this.littleShadow = new egret.Bitmap();
@@ -71,16 +63,6 @@ var FNCompass = (function (_super) {
             this.littleCPBitmap.x = 120;
             this.littleCPBitmap.y = 120;
         }
-        if (!this.littleSector) {
-            var r2 = this.littleCPBitmap.width * 0.5;
-            this.littleSector = new egret.Shape();
-            this.littleSector.graphics.beginFill(0xFF7F50, 0.7);
-            this.littleSector.graphics.moveTo(r, r); //绘制点移动(r, r)点
-            this.littleSector.graphics.lineTo(r + r2, r); //画线到弧的起始点
-            this.littleSector.graphics.drawArc(r, r, r2, this.littleRect[0], this.littleRect[1], false);
-            this.littleSector.graphics.lineTo(r, r); //从终点画线到圆形。到此扇形的封闭区域形成		
-            this.littleSector.graphics.endFill();
-        }
         if (!this.littleSprite) {
             var r_1 = this.bigCPBitmap.width * 0.5;
             var r2 = this.littleCPBitmap.width * 0.5;
@@ -93,7 +75,6 @@ var FNCompass = (function (_super) {
             this.littleSprite.y = r_1;
             this.addChild(this.littleSprite);
             this.littleSprite.addChild(this.littleCPBitmap);
-            this.littleSprite.addChild(this.littleSector);
         }
         if (!this.fingerBitmap) {
             this.fingerBitmap = new egret.Bitmap();
@@ -103,47 +84,77 @@ var FNCompass = (function (_super) {
             this.fingerBitmap.x = (this.bigCPBitmap.width - this.fingerBitmap.width) * 0.5;
             this.fingerBitmap.y = (this.bigCPBitmap.height - this.fingerBitmap.height) * 0.5 - 30;
         }
-        var isHitBig = this.bigSector.hitTestPoint(r, r);
-        var isHitBig2 = this.bigCPBitmap.hitTestPoint(r, 40, false);
-        // var isHitLittle: boolean =  this.littleSector.hitTestPoint( this.littleCPBitmap.width*0.5, 150 , false);
-        // var lll:number = 1;
+        this.randomBound();
     };
     FNCompass.prototype.rotate = function () {
-        this.bigSprite.rotation = this.bigSprite.rotation + this.bigSpeed;
-        this.littleSprite.rotation = this.littleSprite.rotation - this.littleSpeed;
-        // this.bigRect    = [this.bigRect[0]    + 0.5*this.bigSpeed/Math.PI,    this.bigRect[1]    + 0.5*this.bigSpeed/Math.PI   ];
-        // this.littleRect = [this.littleRect[0] - 0.5*this.littleSpeed/Math.PI, this.littleRect[1] - 0.5*this.littleSpeed/Math.PI];
-        this.hitBound();
+        this.bigSprite.rotation = this.bigSprite.rotation + this.bigSpeed * this.curOrientation;
+        this.littleSprite.rotation = this.littleSprite.rotation - this.littleSpeed * this.curOrientation;
+        this.hitCheck();
     };
-    FNCompass.prototype.hitBound = function () {
-        var bigX = (this.bigRect[0] + this.bigSprite.rotation * Math.PI / 180) % (Math.PI * 2);
-        var bigY = (this.bigRect[1] + this.bigSprite.rotation * Math.PI / 180) % (Math.PI * 2);
-        var littleX = (this.littleRect[0] - this.littleSprite.rotation * Math.PI / 180) % (Math.PI * 2);
-        var littleY = (this.littleRect[1] - this.littleSprite.rotation * Math.PI / 180) % (Math.PI * 2);
-        if (bigX < 0)
-            bigX = bigX + Math.PI * 2;
-        if (bigY < 0)
-            bigY = bigY + Math.PI * 2;
-        if (littleX < 0)
-            littleX = littleX + Math.PI * 2;
-        if (littleY < 0)
-            littleY = littleY + Math.PI * 2;
-        if (bigX <= this.standardLimit && this.standardLimit <= bigY && littleX <= this.standardLimit && this.standardLimit <= littleY) {
-            var selfEvent = egret.Event.create(SelfEvent, SelfEvent.HitEvent);
-            this.dispatchEvent(selfEvent);
-        }
+    FNCompass.prototype.resetHit = function () {
+        this.randomBound();
     };
     FNCompass.prototype.randomBound = function () {
-        this.bigRect = [0, 1.1];
-        this.littleRect = [0.6, 1.8];
+        if (Utils.getInstance().totalScore < 20) {
+            this.bigRect = this.bigArr[0];
+            this.littleRect = this.litArr[0];
+        }
+        else if (Utils.getInstance().totalScore < 40) {
+            this.bigRect = this.bigArr[1];
+            this.littleRect = this.litArr[1];
+        }
+        else if (Utils.getInstance().totalScore < 60) {
+            this.bigRect = this.bigArr[2];
+            this.littleRect = this.litArr[2];
+        }
+        else if (Utils.getInstance().totalScore < 80) {
+            this.bigRect = this.bigArr[3];
+            this.littleRect = this.litArr[3];
+        }
+        else if (Utils.getInstance().totalScore < 120) {
+            this.bigRect = this.bigArr[4];
+            this.littleRect = this.litArr[4];
+        }
+        if (this.bigSector) {
+            this.bigSprite.removeChild(this.bigSector);
+            this.bigSector.graphics.clear();
+            this.bigSector = null;
+        }
+        if (this.littleSector) {
+            this.littleSprite.removeChild(this.littleSector);
+            this.littleSector.graphics.clear();
+            this.littleSector = null;
+        }
+        var r = this.bigCPBitmap.width * 0.5;
+        var r2 = this.littleCPBitmap.width * 0.5;
+        this.bigSector = new egret.Shape();
+        this.bigSector.graphics.beginFill(0xFF7F50, 0.7);
+        this.bigSector.graphics.moveTo(r, r); //绘制点移动(r, r)点
+        this.bigSector.graphics.lineTo(r * 2, r); //画线到弧的起始点
+        this.bigSector.graphics.drawArc(r, r, r, this.bigRect[0], this.bigRect[1], false);
+        this.bigSector.graphics.lineTo(r, r); //从终点画线到圆形。到此扇形的封闭区域形成		
+        this.bigSector.graphics.endFill();
+        this.littleSector = new egret.Shape();
+        this.littleSector.graphics.beginFill(0xFF7F50, 0.7);
+        this.littleSector.graphics.moveTo(r, r); //绘制点移动(r, r)点
+        this.littleSector.graphics.lineTo(r + r2, r); //画线到弧的起始点
+        this.littleSector.graphics.drawArc(r, r, r2, this.littleRect[0], this.littleRect[1], false);
+        this.littleSector.graphics.lineTo(r, r); //从终点画线到圆形。到此扇形的封闭区域形成		
+        this.littleSector.graphics.endFill();
+        this.bigSprite.addChild(this.bigSector);
+        this.littleSprite.addChild(this.littleSector);
     };
     FNCompass.prototype.hitCheck = function () {
         var r = this.bigCPBitmap.width * 0.5;
-        var isHitBig = this.bigSector.hitTestPoint(r, r);
-        var isHitLittle = this.littleSector.hitTestPoint(r, r);
-        if (isHitLittle) {
+        var bx1 = Utils.getInstance().StageWidth * 0.5;
+        var by1 = Utils.getInstance().StageHeight * 0.5 - 100;
+        var isHitBig = this.bigSector.hitTestPoint(bx1, by1, true);
+        var isHitLittle = this.littleSector.hitTestPoint(bx1, by1, true);
+        if (isHitBig && isHitLittle) {
             var selfEvent = egret.Event.create(SelfEvent, SelfEvent.HitEvent);
             this.dispatchEvent(selfEvent);
+            this.curOrientation = this.curOrientation * -1;
+            this.resetHit();
         }
     };
     return FNCompass;
