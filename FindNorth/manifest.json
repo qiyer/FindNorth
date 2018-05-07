@@ -8,14 +8,15 @@
 		"libs/modules/promise/promise.js"
 	],
 	"game": [
-		"bin-debug/OverView.js",
+		"bin-debug/Platform.js",
 		"bin-debug/FNCompass.js",
 		"bin-debug/FNScoreNumber.js",
 		"bin-debug/LoadingUI.js",
 		"bin-debug/Main.js",
+		"bin-debug/OverView.js",
 		"bin-debug/FNProcessBar.js",
-		"bin-debug/Platform.js",
 		"bin-debug/RankView.js",
+		"bin-debug/StartView.js",
 		"bin-debug/Utils.js",
 		"bin-debug/Event/GameEvent.js",
 		"bin-debug/Event/SelfEvent.js"

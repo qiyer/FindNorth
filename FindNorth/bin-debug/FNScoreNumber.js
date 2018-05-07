@@ -12,6 +12,13 @@ var FNScoreNumber = (function (_super) {
     __extends(FNScoreNumber, _super);
     function FNScoreNumber() {
         var _this = _super.call(this) || this;
+        _this.colorGreen = false;
+        _this.colorMatrix = [
+            1, 0, 0, 0, 0,
+            0, 1, 0, 0, 100,
+            0, 0, 1, 0, 0,
+            0, 0, 0, 1, 0
+        ];
         _this.setNumber(0);
         return _this;
     }
@@ -26,6 +33,10 @@ var FNScoreNumber = (function (_super) {
             num.texture = texture;
             this.addChild(num);
             num.x = (num.width + 10) * i;
+            if (this.colorGreen) {
+                var colorFlilter = new egret.ColorMatrixFilter(this.colorMatrix);
+                num.filters = [colorFlilter];
+            }
         }
     };
     return FNScoreNumber;

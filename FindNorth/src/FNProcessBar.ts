@@ -10,8 +10,8 @@ class FNProcessBar extends egret.Sprite {
 	private lightBitmap : egret.Bitmap;
 	private maskBitmap  : egret.Bitmap;
 
-	private currentIndex: number   = 500;
-	private timeArr     : number[] = [300,260,240,200,180,160,140,100,80,50];
+	private currentIndex: number   = 240;
+	private timeArr     : number[] = [240,200,170,140,120,100,90,80,60,50];
 	private currentLevel: number   = 0;
 	
 
@@ -51,25 +51,25 @@ class FNProcessBar extends egret.Sprite {
     }
 
 	public resetProcess():void{
-		if(Utils.getInstance().totalScore < 20){
+		if(Utils.getInstance().totalScore < 10){
 			this.currentLevel = 0 ;
-		} else if(Utils.getInstance().totalScore < 40){
+		} else if(Utils.getInstance().totalScore < 20){
 			this.currentLevel = 1 ;
-		} else if(Utils.getInstance().totalScore < 60){
+		} else if(Utils.getInstance().totalScore < 30){
 			this.currentLevel = 2 ;
-		} else if(Utils.getInstance().totalScore < 80){
+		} else if(Utils.getInstance().totalScore < 40){
 			this.currentLevel = 3 ;
-		}else if(Utils.getInstance().totalScore < 120){
+		}else if(Utils.getInstance().totalScore < 50){
 			this.currentLevel = 4 ;
-		}else if(Utils.getInstance().totalScore < 140){
+		}else if(Utils.getInstance().totalScore < 60){
 			this.currentLevel = 5 ;
-		}else if(Utils.getInstance().totalScore < 160){
+		}else if(Utils.getInstance().totalScore < 70){
 			this.currentLevel = 6 ;
-		}else if(Utils.getInstance().totalScore < 180){
+		}else if(Utils.getInstance().totalScore < 80){
 			this.currentLevel = 7 ;
-		}else if(Utils.getInstance().totalScore < 200){
+		}else if(Utils.getInstance().totalScore < 90){
 			this.currentLevel = 8 ;
-		}else if(Utils.getInstance().totalScore < 220){
+		}else if(Utils.getInstance().totalScore < 100){
 			this.currentLevel = 9 ;
 		}
 		this.currentIndex = this.timeArr[this.currentLevel];
@@ -78,7 +78,7 @@ class FNProcessBar extends egret.Sprite {
     public onProgress(): void {
 		if(this.currentIndex > 0){
 			this.currentIndex--;
-			this.maskBitmap.width = this.blueBitmap.width*this.currentIndex/500;
+			this.maskBitmap.width = this.blueBitmap.width*this.currentIndex/this.timeArr[this.currentLevel];
 		}else{
 			var overEvent = egret.Event.create(GameEvent,GameEvent.OverEvent);
         	this.dispatchEvent(overEvent);	

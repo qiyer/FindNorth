@@ -92,6 +92,7 @@ class Main extends egret.DisplayObjectContainer {
     private totalScore :  number = 0;
     private timer      :  egret.Timer;
     private overView   :  OverView;
+    private startView   : StartView;
 
     /**
      * 创建游戏场景
@@ -117,42 +118,16 @@ class Main extends egret.DisplayObjectContainer {
         this.createStartScene();
     }
 
-    private startBG   : egret.Bitmap;
-    private startName : egret.Bitmap;
-    private startBtn  : egret.Bitmap;
-    private rankBtn   : egret.Bitmap;
-
     private createStartScene(){
-        this.startBG = this.createBitmapByName("startbg_png");
-        this.addChild(this.startBG);
-
-        this.startName = this.createBitmapByName("gamename_png");
-        this.addChild(this.startName);
-        this.startName.x = (Utils.getInstance().StageWidth - this.startName.width)*0.5;
-        this.startName.y = 330;
-
-        this.startBtn = this.createBitmapByName("start_png");
-        this.addChild(this.startBtn);
-        this.startBtn.x = (Utils.getInstance().StageWidth - this.startBtn.width)*0.5;
-        this.startBtn.y = 902;
-
-        this.rankBtn = this.createBitmapByName("rank_png");
-        this.addChild(this.rankBtn);
-        this.rankBtn.x = (Utils.getInstance().StageWidth - this.rankBtn.width)*0.5;
-        this.rankBtn.y = Utils.getInstance().StageHeight - this.rankBtn.height - 35;
-
-        this.startBtn.touchEnabled = true;
-        this.rankBtn.touchEnabled  = true;
-        this.startBtn.addEventListener( egret.TouchEvent.TOUCH_TAP, this.startGame, this );
-        this.rankBtn.addEventListener(  egret.TouchEvent.TOUCH_TAP, this.onRank   , this );
+        if(!this.startView){
+            this.startView = new StartView();
+            this.addChild(this.startView);
+            this.startView.addEventListener( GameEvent.StartEvent, this.startGame, this );
+            this.startView.addEventListener( GameEvent.RankEvent , this.onRank   , this );
+        }
     }
 
     private startGame(evt:egret.TouchEvent){
-        this.removeChild(this.startBG);
-        this.removeChild(this.startName);
-        this.removeChild(this.startBtn);
-        this.removeChild(this.rankBtn);
-
         this.createGuide();
     }
 
@@ -180,6 +155,32 @@ class Main extends egret.DisplayObjectContainer {
         this.timer.stop();
         this.overView = new OverView();
         this.addChild(this.overView);
+        this.overView.addEventListener(GameEvent.HomeEvent,this.onHome,this);
+        this.overView.addEventListener(GameEvent.RetryEvent,this.onRetry,this);
+        this.overView.addEventListener(GameEvent.ShareEvent,this.onShare,this);
+    }
+
+    private onHome(e: egret.Event){
+        this.totalScore = 0;
+        Utils.getInstance().totalScore = 0;
+        this.fnScoreNum.setNumber(0);
+        if(!this.startView){
+            this.startView = new StartView();
+        }
+        this.addChild(this.startView);
+    }
+
+    private onRetry(e: egret.Event){
+        this.totalScore = 0;
+        Utils.getInstance().totalScore = 0;
+        this.fnScoreNum.setNumber(0);
+        this.processBar.resetProcess();
+        this.fnCompass.resetHit();
+        this.timer.start();
+    }
+
+    private onShare(e: egret.Event){
+        
     }
 
     private timerFunc(){
@@ -205,6 +206,7 @@ class Main extends egret.DisplayObjectContainer {
             this.addChild(this.fnCompass);
             this.fnCompass.x = (Utils.getInstance().StageWidth - this.processBar.width)*0.5;
             this.fnCompass.y = 350;
+            // this.fnCompass.setFinger(120);
         }
     }
 
@@ -244,6 +246,8 @@ class Main extends egret.DisplayObjectContainer {
         this.removeChild(this.guideBG);
         this.removeChild(this.guideTip);
 
+        this.processBar.resetProcess();
+        this.fnCompass.resetHit();
         this.timer.start();
     } 
 

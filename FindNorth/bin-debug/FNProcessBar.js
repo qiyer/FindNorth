@@ -85,7 +85,7 @@ var FNProcessBar = (function (_super) {
     FNProcessBar.prototype.onProgress = function () {
         if (this.currentIndex > 0) {
             this.currentIndex--;
-            this.maskBitmap.width = this.blueBitmap.width * this.currentIndex / 500;
+            this.maskBitmap.width = this.blueBitmap.width * this.currentIndex / this.timeArr[this.currentLevel];
         }
         else {
             var overEvent = egret.Event.create(GameEvent, GameEvent.OverEvent);

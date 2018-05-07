@@ -81,8 +81,10 @@ var FNCompass = (function (_super) {
             var texture = RES.getRes("finger_png");
             this.fingerBitmap.texture = texture;
             this.addChild(this.fingerBitmap);
-            this.fingerBitmap.x = (this.bigCPBitmap.width - this.fingerBitmap.width) * 0.5;
-            this.fingerBitmap.y = (this.bigCPBitmap.height - this.fingerBitmap.height) * 0.5 - 30;
+            this.fingerBitmap.anchorOffsetX = this.fingerBitmap.width * 0.5;
+            this.fingerBitmap.anchorOffsetY = 212;
+            this.fingerBitmap.x = this.bigCPBitmap.width * 0.5;
+            this.fingerBitmap.y = (this.bigCPBitmap.height) * 0.5 + 5;
         }
         this.randomBound();
     };
@@ -90,6 +92,9 @@ var FNCompass = (function (_super) {
         this.bigSprite.rotation = this.bigSprite.rotation + this.bigSpeed * this.curOrientation;
         this.littleSprite.rotation = this.littleSprite.rotation - this.littleSpeed * this.curOrientation;
         this.hitCheck();
+    };
+    FNCompass.prototype.setFinger = function (dis) {
+        this.fingerBitmap.rotation = dis;
     };
     FNCompass.prototype.resetHit = function () {
         this.randomBound();
@@ -146,8 +151,10 @@ var FNCompass = (function (_super) {
     };
     FNCompass.prototype.hitCheck = function () {
         var r = this.bigCPBitmap.width * 0.5;
-        var bx1 = Utils.getInstance().StageWidth * 0.5;
-        var by1 = Utils.getInstance().StageHeight * 0.5 - 100;
+        // let bx1 = Utils.getInstance().StageWidth*0.5;
+        // let by1 = Utils.getInstance().StageHeight*0.5 - 100;
+        var bx1 = Utils.getInstance().StageWidth * 0.5 + 100 * Math.sin(this.fingerBitmap.rotation * Math.PI / 180);
+        var by1 = Utils.getInstance().StageHeight * 0.5 + 15 - 100 * Math.cos(this.fingerBitmap.rotation * Math.PI / 180);
         var isHitBig = this.bigSector.hitTestPoint(bx1, by1, true);
         var isHitLittle = this.littleSector.hitTestPoint(bx1, by1, true);
         if (isHitBig && isHitLittle) {
@@ -155,6 +162,8 @@ var FNCompass = (function (_super) {
             this.dispatchEvent(selfEvent);
             this.curOrientation = this.curOrientation * -1;
             this.resetHit();
+            this.bigSprite.rotation = this.bigSprite.rotation + 100 * this.curOrientation * Math.random();
+            this.littleSprite.rotation = this.littleSprite.rotation - 60 * this.curOrientation * Math.random();
         }
     };
     return FNCompass;

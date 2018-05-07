@@ -10,6 +10,8 @@ class OverView extends egret.Sprite {
 	private retryBtn   :  egret.Bitmap;
 	private shareBtn   :  egret.Bitmap;
 
+	private fnScoreNum :  FNScoreNumber;
+
 	public createView(){
 		this.guideBG = new egret.Shape();
         this.guideBG.graphics.beginFill( 0x666666 );
@@ -30,7 +32,7 @@ class OverView extends egret.Sprite {
 		this.shareBtn = Utils.createBitmapByName("share_png");
 		this.addChild(this.shareBtn);
 		this.shareBtn.x = (Utils.getInstance().StageWidth - this.shareBtn.width)*0.5;
-		this.shareBtn.y = 350;
+		this.shareBtn.y = 450;
 
 		this.homeBtn = Utils.createBitmapByName("home_btn_png");
 		this.addChild(this.homeBtn);
@@ -40,7 +42,14 @@ class OverView extends egret.Sprite {
 		this.retryBtn = Utils.createBitmapByName("retry_png");
 		this.addChild(this.retryBtn);
 		this.retryBtn.x = Utils.getInstance().StageWidth - this.retryBtn.width - 101;
-		this.retryBtn.y = Utils.getInstance().StageHeight - 300;
+		this.retryBtn.y = Utils.getInstance().StageHeight - 310;
+
+		this.fnScoreNum = new FNScoreNumber();
+        this.addChild(this.fnScoreNum);
+		this.fnScoreNum.colorGreen = true;
+		this.fnScoreNum.setNumber(Utils.getInstance().totalScore);
+        this.fnScoreNum.x = (Utils.getInstance().StageWidth - this.fnScoreNum.width)*0.5;
+        this.fnScoreNum.y = 250;
 
 		this.shareBtn.touchEnabled = true;
         this.homeBtn.touchEnabled  = true;
@@ -51,15 +60,20 @@ class OverView extends egret.Sprite {
 	}
 
     private onShare(evt:egret.TouchEvent){
-        
+        var overEvent = egret.Event.create(GameEvent,GameEvent.ShareEvent);
+     	this.dispatchEvent(overEvent);
     } 
 
     private onHome(evt:egret.TouchEvent){
         this.parent.removeChild(this);
+		var overEvent = egret.Event.create(GameEvent,GameEvent.HomeEvent);
+    	this.dispatchEvent(overEvent);
     } 
 
 	private onRetry(evt:egret.TouchEvent){
         this.parent.removeChild(this);
+		var overEvent = egret.Event.create(GameEvent,GameEvent.RetryEvent);
+    	this.dispatchEvent(overEvent);
     } 
 
 }

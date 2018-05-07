@@ -88,8 +88,10 @@ class FNCompass extends egret.Sprite {
         	let texture: egret.Texture = RES.getRes("finger_png");
             this.fingerBitmap.texture  = texture;
 			this.addChild(this.fingerBitmap);
-			this.fingerBitmap.x = (this.bigCPBitmap.width  - this.fingerBitmap.width)*0.5;	
-			this.fingerBitmap.y = (this.bigCPBitmap.height - this.fingerBitmap.height)*0.5 - 30;		
+			this.fingerBitmap.anchorOffsetX  = this.fingerBitmap.width *0.5;
+			this.fingerBitmap.anchorOffsetY  = 212;
+			this.fingerBitmap.x = this.bigCPBitmap.width*0.5;	
+			this.fingerBitmap.y = (this.bigCPBitmap.height)*0.5 + 5;
 		}
 
 		this.randomBound();
@@ -101,7 +103,11 @@ class FNCompass extends egret.Sprite {
 		this.hitCheck();
 	}
 
-	private resetHit(){
+	public setFinger(dis:number):void{
+		this.fingerBitmap.rotation = dis;
+	}
+
+	public resetHit(){
 		this.randomBound();
 	}
 
@@ -162,8 +168,11 @@ class FNCompass extends egret.Sprite {
 	private hitCheck():void{
 		let r                    =  this.bigCPBitmap.width*0.5;
 
-		let bx1 = Utils.getInstance().StageWidth*0.5;
-		let by1 = Utils.getInstance().StageHeight*0.5 - 100;
+		// let bx1 = Utils.getInstance().StageWidth*0.5;
+		// let by1 = Utils.getInstance().StageHeight*0.5 - 100;
+
+        let bx1 = Utils.getInstance().StageWidth*0.5 + 100*Math.sin(this.fingerBitmap.rotation*Math.PI/180);
+        let by1 = Utils.getInstance().StageHeight*0.5+15 - 100*Math.cos(this.fingerBitmap.rotation*Math.PI/180);
 
 		var isHitBig   : boolean =  this.bigSector.hitTestPoint( bx1, by1 ,true);
 		var isHitLittle: boolean =  this.littleSector.hitTestPoint( bx1, by1 ,true);
@@ -172,6 +181,8 @@ class FNCompass extends egret.Sprite {
         	this.dispatchEvent(selfEvent);
 			this.curOrientation = this.curOrientation*-1;
 			this.resetHit();
+			this.bigSprite.rotation = this.bigSprite.rotation + (70*Math.random() + 20)*this.curOrientation;
+			this.littleSprite.rotation = this.littleSprite.rotation - (60*Math.random() + 20)*this.curOrientation;
 		}
 	}
 

@@ -166,30 +166,14 @@ var Main = (function (_super) {
         this.createStartScene();
     };
     Main.prototype.createStartScene = function () {
-        this.startBG = this.createBitmapByName("startbg_png");
-        this.addChild(this.startBG);
-        this.startName = this.createBitmapByName("gamename_png");
-        this.addChild(this.startName);
-        this.startName.x = (Utils.getInstance().StageWidth - this.startName.width) * 0.5;
-        this.startName.y = 330;
-        this.startBtn = this.createBitmapByName("start_png");
-        this.addChild(this.startBtn);
-        this.startBtn.x = (Utils.getInstance().StageWidth - this.startBtn.width) * 0.5;
-        this.startBtn.y = 902;
-        this.rankBtn = this.createBitmapByName("rank_png");
-        this.addChild(this.rankBtn);
-        this.rankBtn.x = (Utils.getInstance().StageWidth - this.rankBtn.width) * 0.5;
-        this.rankBtn.y = Utils.getInstance().StageHeight - this.rankBtn.height - 35;
-        this.startBtn.touchEnabled = true;
-        this.rankBtn.touchEnabled = true;
-        this.startBtn.addEventListener(egret.TouchEvent.TOUCH_TAP, this.startGame, this);
-        this.rankBtn.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onRank, this);
+        if (!this.startView) {
+            this.startView = new StartView();
+            this.addChild(this.startView);
+            this.startView.addEventListener(GameEvent.StartEvent, this.startGame, this);
+            this.startView.addEventListener(GameEvent.RankEvent, this.onRank, this);
+        }
     };
     Main.prototype.startGame = function (evt) {
-        this.removeChild(this.startBG);
-        this.removeChild(this.startName);
-        this.removeChild(this.startBtn);
-        this.removeChild(this.rankBtn);
         this.createGuide();
     };
     Main.prototype.onRank = function (evt) {
@@ -212,6 +196,27 @@ var Main = (function (_super) {
         this.timer.stop();
         this.overView = new OverView();
         this.addChild(this.overView);
+        this.overView.addEventListener(GameEvent.HomeEvent, this.onHome, this);
+        this.overView.addEventListener(GameEvent.RetryEvent, this.onRetry, this);
+        this.overView.addEventListener(GameEvent.ShareEvent, this.onShare, this);
+    };
+    Main.prototype.onHome = function (e) {
+        this.totalScore = 0;
+        Utils.getInstance().totalScore = 0;
+        this.fnScoreNum.setNumber(0);
+        if (!this.startView) {
+            this.startView = new StartView();
+        }
+        this.addChild(this.startView);
+    };
+    Main.prototype.onRetry = function (e) {
+        this.totalScore = 0;
+        Utils.getInstance().totalScore = 0;
+        this.fnScoreNum.setNumber(0);
+        this.processBar.resetProcess();
+        this.timer.start();
+    };
+    Main.prototype.onShare = function (e) {
     };
     Main.prototype.timerFunc = function () {
         // egret.log("计时");
@@ -233,6 +238,7 @@ var Main = (function (_super) {
             this.addChild(this.fnCompass);
             this.fnCompass.x = (Utils.getInstance().StageWidth - this.processBar.width) * 0.5;
             this.fnCompass.y = 350;
+            // this.fnCompass.setFinger(120);
         }
     };
     Main.prototype.setProcessBar = function () {
@@ -262,6 +268,7 @@ var Main = (function (_super) {
     Main.prototype.onStartGame = function (evt) {
         this.removeChild(this.guideBG);
         this.removeChild(this.guideTip);
+        this.processBar.resetProcess();
         this.timer.start();
     };
     /**

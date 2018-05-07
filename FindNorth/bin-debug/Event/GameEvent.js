@@ -16,6 +16,11 @@ var GameEvent = (function (_super) {
         return _super.call(this, type, bubbles, cancelable) || this;
     }
     GameEvent.OverEvent = "over_event";
+    GameEvent.HomeEvent = "home_event";
+    GameEvent.RetryEvent = "retry_event";
+    GameEvent.ShareEvent = "share_event";
+    GameEvent.StartEvent = "start_event";
+    GameEvent.RankEvent = "rank_event";
     return GameEvent;
 }(egret.Event));
 __reflect(GameEvent.prototype, "GameEvent");

@@ -4,6 +4,15 @@ class FNScoreNumber extends egret.Sprite {
 		this.setNumber(0);
 	}
 
+	public colorGreen: boolean = false;
+
+	public colorMatrix = [
+   						 	1,0,0,0,0,
+    						0,1,0,0,100,
+    						0,0,1,0,0,
+    						0,0,0,1,0	
+						 ];
+
 	public setNumber(count:number){
 		this.removeChildren();
 		let countStr = String(count);
@@ -15,6 +24,11 @@ class FNScoreNumber extends egret.Sprite {
             num.texture = texture;
 			this.addChild(num);
 			num.x = (num.width+10)*i;
+
+			if(this.colorGreen){
+				var colorFlilter = new egret.ColorMatrixFilter(this.colorMatrix);
+				num.filters = [colorFlilter];
+			}
         }
 	}
 }
