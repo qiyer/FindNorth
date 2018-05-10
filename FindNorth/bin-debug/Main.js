@@ -214,6 +214,7 @@ var Main = (function (_super) {
         Utils.getInstance().totalScore = 0;
         this.fnScoreNum.setNumber(0);
         this.processBar.resetProcess();
+        this.fnCompass.resetHit();
         this.timer.start();
     };
     Main.prototype.onShare = function (e) {
@@ -269,6 +270,7 @@ var Main = (function (_super) {
         this.removeChild(this.guideBG);
         this.removeChild(this.guideTip);
         this.processBar.resetProcess();
+        this.fnCompass.resetHit();
         this.timer.start();
     };
     /**

@@ -162,8 +162,8 @@ var FNCompass = (function (_super) {
             this.dispatchEvent(selfEvent);
             this.curOrientation = this.curOrientation * -1;
             this.resetHit();
-            this.bigSprite.rotation = this.bigSprite.rotation + 100 * this.curOrientation * Math.random();
-            this.littleSprite.rotation = this.littleSprite.rotation - 60 * this.curOrientation * Math.random();
+            this.bigSprite.rotation = this.bigSprite.rotation + (70 * Math.random() + 20) * this.curOrientation;
+            this.littleSprite.rotation = this.littleSprite.rotation - (60 * Math.random() + 20) * this.curOrientation;
         }
     };
     return FNCompass;

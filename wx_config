@@ -1,0 +1,30 @@
+
+
+
+            var _this = this;
+            wx.onCompassChange(function (res) {
+              _this.fnCompass.setFinger(res.direction);
+            });
+            wx.startCompass();
+
+
+    Main.prototype.onRank = function (evt) {
+        // if (!this.rankView) {
+        //     this.rankView = new RankView();
+        // }
+        // this.addChild(this.rankView);
+      wx.showToast({
+        title: '即将开放~',
+        icon: 'none',
+        duration: 2000
+      })
+    };
+
+
+    Main.prototype.onShare = function (e) {
+      wx.showToast({
+        title: '分享~',
+        icon: 'none',
+        duration: 2000
+      })
+    };

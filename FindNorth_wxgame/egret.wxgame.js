@@ -1737,28 +1737,6 @@ if (window['HTMLVideoElement'] == undefined) {
                     if (this._response) {
                         return this._response;
                     }
-                    if (!this._xhr) {
-                        return null;
-                    }
-                    if (this._xhr.response != undefined) {
-                        return this._xhr.response;
-                    }
-                    if (this._responseType == "text") {
-                        return this._xhr.responseText;
-                    }
-                    if (this._responseType == "arraybuffer" && /msie 9.0/i.test(navigator.userAgent)) {
-                        var w = window;
-                        return w.convertResponseBodyToText(this._xhr["responseBody"]);
-                    }
-                    if (this._responseType == "document") {
-                        return this._xhr.responseXML;
-                    }
-                    /*if (this._xhr.responseXML) {
-                        return this._xhr.responseXML;
-                    }
-                    if (this._xhr.responseText != undefined) {
-                        return this._xhr.responseText;
-                    }*/
                     return null;
                 },
                 enumerable: true,
@@ -1802,14 +1780,6 @@ if (window['HTMLVideoElement'] == undefined) {
                 if (method === void 0) { method = "GET"; }
                 this._url = url;
                 this._method = method;
-                if (this._xhr) {
-                    this._xhr.abort();
-                    this._xhr = null;
-                }
-                this._xhr = new XMLHttpRequest();
-                this._xhr.onreadystatechange = this.onReadyStateChange.bind(this);
-                this._xhr.onprogress = this.updateProgress.bind(this);
-                this._xhr.open(this._method, this._url, true);
             };
             WebHttpRequest.prototype.readFileAsync = function () {
                 var self = this;
@@ -1859,18 +1829,46 @@ if (window['HTMLVideoElement'] == undefined) {
                     this.readFileAsync();
                 }
                 else {
-                    if (this._responseType != null) {
-                        this._xhr.responseType = this._responseType;
-                    }
-                    if (this._withCredentials != null) {
-                        this._xhr.withCredentials = this._withCredentials;
-                    }
-                    if (this.headerObj) {
-                        for (var key in this.headerObj) {
-                            this._xhr.setRequestHeader(key, this.headerObj[key]);
+                    var self_1 = this;
+                    wx.request({
+                        data: data,
+                        url: this._url,
+                        method: this._method,
+                        header: this.headerObj,
+                        responseType: this.responseType,
+                        success: function success(_ref) {
+                            var data = _ref.data, statusCode = _ref.statusCode, header = _ref.header;
+                            if (statusCode != 200) {
+                                self_1.dispatchEventWith(egret.IOErrorEvent.IO_ERROR);
+                                return;
+                            }
+                            if (typeof data !== 'string' && !(data instanceof ArrayBuffer)) {
+                                try {
+                                    data = JSON.stringify(data);
+                                }
+                                catch (e) {
+                                    data = data;
+                                }
+                            }
+                            self_1._responseHeader = header;
+                            if (data instanceof ArrayBuffer) {
+                                self_1._response = '';
+                                var bytes = new Uint8Array(data);
+                                var len = bytes.byteLength;
+                                for (var i = 0; i < len; i++) {
+                                    self_1._response += String.fromCharCode(bytes[i]);
+                                }
+                            }
+                            else {
+                                self_1._response = data;
+                            }
+                            self_1.dispatchEventWith(egret.Event.COMPLETE);
+                        },
+                        fail: function fail(_ref2) {
+                            // var errMsg = _ref2.errMsg;
+                            self_1.dispatchEventWith(egret.IOErrorEvent.IO_ERROR);
                         }
-                    }
-                    this._xhr.send(data);
+                    });
                 }
             };
             /**
@@ -1886,20 +1884,19 @@ if (window['HTMLVideoElement'] == undefined) {
              * 如果请求已经被发送,则立刻中止请求.
              */
             WebHttpRequest.prototype.abort = function () {
-                if (this._xhr) {
-                    this._xhr.abort();
-                }
             };
             /**
              * @private
              * 返回所有响应头信息(响应头名和值), 如果响应头还没接受,则返回"".
              */
             WebHttpRequest.prototype.getAllResponseHeaders = function () {
-                if (!this._xhr) {
+                var responseHeader = this._responseHeader;
+                if (!responseHeader) {
                     return null;
                 }
-                var result = this._xhr.getAllResponseHeaders();
-                return result ? result : "";
+                return Object.keys(responseHeader).map(function (header) {
+                    return header + ': ' + responseHeader[header];
+                }).join('\n');
             };
             /**
              * @private
@@ -1919,31 +1916,11 @@ if (window['HTMLVideoElement'] == undefined) {
              * @param header 要返回的响应头名称
              */
             WebHttpRequest.prototype.getResponseHeader = function (header) {
-                if (!this._xhr) {
+                if (!this._responseHeader) {
                     return null;
                 }
-                var result = this._xhr.getResponseHeader(header);
+                var result = this._responseHeader[header];
                 return result ? result : "";
-            };
-            /**
-             * @private
-             */
-            WebHttpRequest.prototype.onReadyStateChange = function () {
-                var xhr = this._xhr;
-                if (xhr.readyState == 4) {
-                    var ioError = (xhr.status >= 400 || xhr.status == 0);
-                    var url = this._url;
-                    var self_1 = this;
-                    if (ioError) {
-                        if (true && !self_1.hasEventListener(egret.IOErrorEvent.IO_ERROR)) {
-                            egret.$error(1011, url);
-                        }
-                        self_1.dispatchEventWith(egret.IOErrorEvent.IO_ERROR);
-                    }
-                    else {
-                        self_1.dispatchEventWith(egret.Event.COMPLETE);
-                    }
-                }
             };
             /**
              * @private
@@ -2082,7 +2059,9 @@ if (window['HTMLVideoElement'] == undefined) {
                 }
                 this.data = new egret.BitmapData(image);
                 var self = this;
-                self.dispatchEventWith(egret.Event.COMPLETE);
+                window.setTimeout(function () {
+                    self.dispatchEventWith(egret.Event.COMPLETE);
+                }, 0);
             };
             /**
              * @private
@@ -2096,10 +2075,12 @@ if (window['HTMLVideoElement'] == undefined) {
             };
             WebImageLoader.prototype.dispatchIOError = function (url) {
                 var self = this;
-                if (true && !self.hasEventListener(egret.IOErrorEvent.IO_ERROR)) {
-                    egret.$error(1011, url);
-                }
-                self.dispatchEventWith(egret.IOErrorEvent.IO_ERROR);
+                window.setTimeout(function () {
+                    if (true && !self.hasEventListener(egret.IOErrorEvent.IO_ERROR)) {
+                        egret.$error(1011, url);
+                    }
+                    self.dispatchEventWith(egret.IOErrorEvent.IO_ERROR);
+                }, 0);
             };
             /**
              * @private
@@ -3075,7 +3056,7 @@ if (window['HTMLVideoElement'] == undefined) {
         /**
          * 微信小游戏支持库版本号
          */
-        wxgame.version = "1.0.14";
+        wxgame.version = "1.0.15";
         /**
          * 运行环境是否为子域
          */
@@ -3781,8 +3762,8 @@ if (true) {
             rect.y = Math.min(rect.y, h - 1);
             rect.width = Math.min(rect.width, w - rect.x);
             rect.height = Math.min(rect.height, h - rect.y);
-            var iWidth = rect.width;
-            var iHeight = rect.height;
+            var iWidth = Math.floor(rect.width);
+            var iHeight = Math.floor(rect.height);
             var surface = sharedCanvas;
             surface["style"]["width"] = iWidth + "px";
             surface["style"]["height"] = iHeight + "px";
@@ -3800,11 +3781,21 @@ if (true) {
                 }
                 //从RenderTexture中读取像素数据，填入canvas
                 var pixels = renderTexture.$renderBuffer.getPixels(rect.x, rect.y, iWidth, iHeight);
-                var imageData = new ImageData(iWidth, iHeight);
-                for (var i = 0; i < pixels.length; i++) {
-                    imageData.data[i] = pixels[i];
+                var x = 0;
+                var y = 0;
+                for (var i = 0; i < pixels.length; i += 4) {
+                    sharedContext.fillStyle =
+                        'rgba(' + pixels[i]
+                            + ',' + pixels[i + 1]
+                            + ',' + pixels[i + 2]
+                            + ',' + (pixels[i + 3] / 255) + ')';
+                    sharedContext.fillRect(x, y, 1, 1);
+                    x++;
+                    if (x == iWidth) {
+                        x = 0;
+                        y++;
+                    }
                 }
-                sharedContext.putImageData(imageData, 0, 0);
                 if (!texture.$renderBuffer) {
                     renderTexture.dispose();
                 }
@@ -3838,17 +3829,18 @@ if (true) {
          * 有些杀毒软件认为 saveToFile 可能是一个病毒文件
          */
         function eliFoTevas(type, filePath, rect, encoderOptions) {
-            var base64 = toDataURL.call(this, type, rect, encoderOptions);
-            if (base64 == null) {
-                return;
-            }
-            var href = base64.replace(/^data:image[^;]*/, "data:image/octet-stream");
-            var aLink = document.createElement('a');
-            aLink['download'] = filePath;
-            aLink.href = href;
-            var evt = document.createEvent('MouseEvents');
-            evt.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-            aLink.dispatchEvent(evt);
+            var surface = convertImageToCanvas(this, rect);
+            var result = surface.toTempFilePathSync({
+                fileType: type.indexOf("png") >= 0 ? "png" : "jpg"
+            });
+            wx.getFileSystemManager().saveFile({
+                tempFilePath: result,
+                filePath: wx.env.USER_DATA_PATH + "/" + filePath,
+                success: function (res) {
+                    //todo
+                }
+            });
+            return result;
         }
         function getPixel32(x, y) {
             egret.$warn(1041, "getPixel32", "getPixels");

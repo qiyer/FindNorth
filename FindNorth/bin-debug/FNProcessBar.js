@@ -12,8 +12,8 @@ var FNProcessBar = (function (_super) {
     __extends(FNProcessBar, _super);
     function FNProcessBar() {
         var _this = _super.call(this) || this;
-        _this.currentIndex = 500;
-        _this.timeArr = [300, 260, 240, 200, 180, 160, 140, 100, 80, 50];
+        _this.currentIndex = 240;
+        _this.timeArr = [240, 200, 170, 140, 120, 100, 90, 80, 60, 50];
         _this.currentLevel = 0;
         _this.createView();
         return _this;
@@ -50,34 +50,34 @@ var FNProcessBar = (function (_super) {
         }
     };
     FNProcessBar.prototype.resetProcess = function () {
-        if (Utils.getInstance().totalScore < 20) {
+        if (Utils.getInstance().totalScore < 10) {
             this.currentLevel = 0;
         }
-        else if (Utils.getInstance().totalScore < 40) {
+        else if (Utils.getInstance().totalScore < 20) {
             this.currentLevel = 1;
         }
-        else if (Utils.getInstance().totalScore < 60) {
+        else if (Utils.getInstance().totalScore < 30) {
             this.currentLevel = 2;
         }
-        else if (Utils.getInstance().totalScore < 80) {
+        else if (Utils.getInstance().totalScore < 40) {
             this.currentLevel = 3;
         }
-        else if (Utils.getInstance().totalScore < 120) {
+        else if (Utils.getInstance().totalScore < 50) {
             this.currentLevel = 4;
         }
-        else if (Utils.getInstance().totalScore < 140) {
+        else if (Utils.getInstance().totalScore < 60) {
             this.currentLevel = 5;
         }
-        else if (Utils.getInstance().totalScore < 160) {
+        else if (Utils.getInstance().totalScore < 70) {
             this.currentLevel = 6;
         }
-        else if (Utils.getInstance().totalScore < 180) {
+        else if (Utils.getInstance().totalScore < 80) {
             this.currentLevel = 7;
         }
-        else if (Utils.getInstance().totalScore < 200) {
+        else if (Utils.getInstance().totalScore < 90) {
             this.currentLevel = 8;
         }
-        else if (Utils.getInstance().totalScore < 220) {
+        else if (Utils.getInstance().totalScore < 100) {
             this.currentLevel = 9;
         }
         this.currentIndex = this.timeArr[this.currentLevel];
